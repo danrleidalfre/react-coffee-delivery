@@ -7,6 +7,11 @@ export const CheckoutContainer = styled.main`
   display: grid;
   grid-template-columns: 640px auto;
   gap: 2rem;
+
+  @media (max-width: 768px) {
+    padding: 7rem 2rem 0;
+    grid-template-columns: 1fr;
+  }
 `
 
 export const AddressAndPayment = styled.section``
@@ -70,6 +75,9 @@ export const Form = styled.form`
 export const InputRow = styled.div`
   display: flex;
   gap: 0.75rem;
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `
 
 export const Input = styled.input`
@@ -91,6 +99,10 @@ export const Input = styled.input`
   &:focus-within {
     border: 1px solid ${(props) => props.theme['yellow-dark']};
   }
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
 `
 
 export const InputFull = styled(Input)`
@@ -99,16 +111,26 @@ export const InputFull = styled(Input)`
 
 export const InputCity = styled(Input)`
   max-width: 276px;
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
 `
 
 export const InputUF = styled(Input)`
   max-width: 60px;
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
 `
 
 export const PaymentButtonsRow = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.75rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 `
 
 export const PaymentButton = styled.button`

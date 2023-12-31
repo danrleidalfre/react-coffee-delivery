@@ -4,6 +4,10 @@ export const SuccessContainer = styled.main`
   padding-top: 11.5rem;
   max-width: 70rem;
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 7rem 2rem 0;
+  }
 `
 
 export const H1 = styled.h1`
@@ -26,6 +30,10 @@ export const Delivery = styled.section`
   margin-top: 2.5rem;
   display: flex;
   justify-content: space-between;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `
 
 export const Infos = styled.div`
@@ -55,6 +63,10 @@ export const Infos = styled.div`
     -webkit-mask-composite: xor;
     mask-composite: exclude;
   }
+
+  @media (max-width: 768px) {
+    margin-bottom: 2rem;
+  }
 `
 
 export const Info = styled.div`
@@ -78,6 +90,10 @@ export const Address = styled(Info)`
 `
 
 export const Forecast = styled(Info)`
+  @media (max-width: 768px) {
+    margin: 1rem 0;
+  }
+
   div {
     background-color: ${(props) => props.theme.yellow};
   }

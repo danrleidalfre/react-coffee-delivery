@@ -2,6 +2,10 @@ import styled from 'styled-components'
 
 export const HomeContainer = styled.main`
   padding-top: 6.875rem;
+
+  @media (max-width: 768px) {
+    padding-top: 5rem;
+  }
 `
 
 export const BannerContainer = styled.section`
@@ -34,6 +38,36 @@ export const Banner = styled.div`
     line-height: 130%;
     margin-bottom: 4.125rem;
   }
+
+  @media (max-width: 1200px) {
+    padding: 6.25rem 2rem;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 2rem;
+
+    h1 {
+      font-size: 2rem;
+
+      br {
+        display: none;
+      }
+    }
+
+    p {
+      margin-bottom: 2rem;
+
+      br {
+        display: none;
+      }
+    }
+
+    img {
+      width: 100%;
+      margin-top: 2rem;
+    }
+  }
 `
 
 export const Itens = styled.div`
@@ -46,6 +80,10 @@ export const Itens = styled.div`
     align-items: center;
     font-size: 1rem;
     font-weight: 400;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
   }
 `
 
@@ -91,6 +129,14 @@ export const CoffeesContainer = styled.section`
     line-height: 130%;
     margin-bottom: 3.375rem;
   }
+
+  @media (max-width: 1200px) {
+    padding: 0 2rem;
+  }
+
+  @media (max-width: 768px) {
+    margin: 2rem auto;
+  }
 `
 
 export const Coffees = styled.div`
@@ -98,6 +144,10 @@ export const Coffees = styled.div`
   grid-template-columns: repeat(4, 1fr);
   row-gap: 2.5rem;
   column-gap: 2rem;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: 1fr;
+  }
 `
 
 export const CoffeeCard = styled.article`

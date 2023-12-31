@@ -16,6 +16,10 @@ export const HeaderContent = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  @media (max-width: 768px) {
+    padding: 1.25rem 0;
+  }
 `
 
 export const Nav = styled.nav`

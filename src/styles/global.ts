@@ -1,9 +1,5 @@
 import { createGlobalStyle } from 'styled-components'
 
-export interface DefaultTheme {
-  body: string
-}
-
 export const GlobalStyle = createGlobalStyle`
     * {
         margin: 0;
@@ -26,5 +22,11 @@ export const GlobalStyle = createGlobalStyle`
     :focus {
         outline: 0;
         box-shadow: none;
+    }
+
+    @media (max-width: 768px) {
+        html {
+            font-size: 87.5%;
+        }
     }
 `

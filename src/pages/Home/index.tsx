@@ -156,8 +156,7 @@ export function Home() {
         <Banner>
           <div>
             <h1>
-              Encontre o café perfeito
-              <br />
+              Encontre o café perfeito <br />
               para qualquer hora do dia
             </h1>
             <p>
