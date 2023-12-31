@@ -28,12 +28,26 @@ import {
   ShoppingCart,
   Timer,
 } from 'phosphor-react'
+import { useState } from 'react'
+
+interface Label {
+  title: string
+}
+
+interface Coffee {
+  id: number
+  labels: Label[]
+  title: string
+  description: string
+  price: string
+  quantity: number
+}
 
 export function Home() {
-  const coffees = [
+  const [coffees, setCoffee] = useState<Coffee[]>([
     {
       id: 1,
-      labels: ['Tradicional'],
+      labels: [{ title: 'Tradicional' }],
       title: 'Expresso Tradicional',
       description: 'O tradicional café feito com água quente e grãos moídos',
       price: '5,50',
@@ -41,7 +55,7 @@ export function Home() {
     },
     {
       id: 2,
-      labels: ['Tradicional'],
+      labels: [{ title: 'Tradicional' }],
       title: 'Expresso Americano',
       description: 'Expresso diluído, menos intenso que o tradicional',
       price: '5,50',
@@ -49,7 +63,7 @@ export function Home() {
     },
     {
       id: 3,
-      labels: ['Tradicional'],
+      labels: [{ title: 'Tradicional' }],
       title: 'Expresso Cremoso',
       description: 'Café expresso tradicional com espuma cremosa',
       price: '6,50',
@@ -57,7 +71,7 @@ export function Home() {
     },
     {
       id: 4,
-      labels: ['Tradicional', 'Gelado'],
+      labels: [{ title: 'Tradicional' }, { title: 'Gelado' }],
       title: 'Expresso Gelado',
       description: 'Bebida preparada com café expresso e cubos de gelo',
       price: '6,50',
@@ -65,7 +79,7 @@ export function Home() {
     },
     {
       id: 5,
-      labels: ['Tradicional', 'Com Leite'],
+      labels: [{ title: 'Tradicional' }, { title: 'Com Leite' }],
       title: 'Café com Leite',
       description: 'Meio a meio de expresso tradicional com leite vaporizado',
       price: '8,50',
@@ -73,7 +87,7 @@ export function Home() {
     },
     {
       id: 6,
-      labels: ['Tradicional', 'Com Leite'],
+      labels: [{ title: 'Tradicional' }, { title: 'Com Leite' }],
       title: 'Latte',
       description:
         'Uma dose de café expresso com o dobro de leite e espuma cremosa',
@@ -82,7 +96,7 @@ export function Home() {
     },
     {
       id: 7,
-      labels: ['Tradicional', 'Com Leite'],
+      labels: [{ title: 'Tradicional' }, { title: 'Com Leite' }],
       title: 'Capuccino',
       description:
         'Bebida com canela feita de doses iguais de café, leite e espuma',
@@ -91,7 +105,7 @@ export function Home() {
     },
     {
       id: 8,
-      labels: ['Tradicional', 'Com Leite'],
+      labels: [{ title: 'Tradicional' }, { title: 'Com Leite' }],
       title: 'Macchiato',
       description:
         'Café expresso misturado com um pouco de leite quente e espuma',
@@ -100,7 +114,7 @@ export function Home() {
     },
     {
       id: 9,
-      labels: ['Tradicional', 'Com Leite'],
+      labels: [{ title: 'Tradicional' }, { title: 'Com Leite' }],
       title: 'Mocaccino',
       description: 'Café expresso com calda de chocolate, pouco leite e espuma',
       price: '10,50',
@@ -108,7 +122,7 @@ export function Home() {
     },
     {
       id: 10,
-      labels: ['Especial', 'Com Leite'],
+      labels: [{ title: 'Especial' }, { title: 'Com Leite' }],
       title: 'Chocolate Quente',
       description:
         'Bebida feita com chocolate dissolvido no leite quente e café',
@@ -117,7 +131,11 @@ export function Home() {
     },
     {
       id: 11,
-      labels: ['Especial', 'Alcoólico', 'Gelado'],
+      labels: [
+        { title: 'Especial' },
+        { title: 'Alcoólico' },
+        { title: 'Gelado' },
+      ],
       title: 'Cubano',
       description:
         'Drink gelado de café expresso com rum, creme de leite e hortelã',
@@ -126,7 +144,7 @@ export function Home() {
     },
     {
       id: 12,
-      labels: ['Especial'],
+      labels: [{ title: 'Especial' }],
       title: 'Havaiano',
       description: 'Bebida adocicada preparada com café e leite de coco',
       price: '13,50',
@@ -134,7 +152,7 @@ export function Home() {
     },
     {
       id: 13,
-      labels: ['Especial'],
+      labels: [{ title: 'Especial' }],
       title: 'Árabe',
       description: 'Bebida preparada com grãos de café árabe e especiarias',
       price: '10,50',
@@ -142,13 +160,51 @@ export function Home() {
     },
     {
       id: 14,
-      labels: ['Especial', 'Alcoólico'],
+      labels: [{ title: 'Especial' }, { title: 'Alcoólico' }],
       title: 'Irlandês',
       description: 'Bebida a base de café, uísque irlandês, açúcar e chantilly',
       price: '15,50',
       quantity: 1,
     },
-  ]
+  ])
+
+  function handleQuantity(coffee: Coffee, action: 'add' | 'remove') {
+    if (action === 'add') {
+      coffee.quantity = coffee.quantity + 1
+    } else if (action === 'remove' && coffee.quantity > 1) {
+      coffee.quantity = coffee.quantity - 1
+    } else {
+      return
+    }
+
+    const allCoffees = coffees.filter((c) => c.id !== coffee.id)
+    const sortedCoffees = [...allCoffees, coffee].sort((a, b) => a.id - b.id)
+    setCoffee(sortedCoffees)
+  }
+
+  function handleAddCart(coffee: Coffee) {
+    const storedStateAsJSON = localStorage.getItem('@coffee-delivery:order')
+
+    if (storedStateAsJSON) {
+      const storedStateArray: Coffee[] = JSON.parse(storedStateAsJSON)
+      const existingCoffee = storedStateArray.find((c) => c.id === coffee.id)
+
+      if (existingCoffee) {
+        existingCoffee.quantity += coffee.quantity
+      } else {
+        storedStateArray.push(coffee)
+      }
+
+      localStorage.setItem(
+        '@coffee-delivery:order',
+        JSON.stringify(storedStateArray),
+      )
+
+      return
+    }
+
+    localStorage.setItem('@coffee-delivery:order', JSON.stringify([coffee]))
+  }
 
   return (
     <HomeContainer>
@@ -202,7 +258,7 @@ export function Home() {
                 <img src={`/src/assets/coffees/${coffee.id}.png`} alt="" />
                 <Labels>
                   {coffee.labels.map((label) => {
-                    return <Label key={label}>{label}</Label>
+                    return <Label key={label.title}>{label.title}</Label>
                   })}
                 </Labels>
                 <h4>{coffee.title}</h4>
@@ -213,12 +269,23 @@ export function Home() {
                   </Price>
                   <Actions>
                     <Quantity>
-                      <Minus size={14} weight={'bold'} />
+                      <Minus
+                        size={14}
+                        weight={'bold'}
+                        onClick={() => handleQuantity(coffee, 'remove')}
+                      />
                       <span>{coffee.quantity}</span>
-                      <Plus size={14} weight={'bold'} />
+                      <Plus
+                        size={14}
+                        weight={'bold'}
+                        onClick={() => handleQuantity(coffee, 'add')}
+                      />
                     </Quantity>
-                    <AddCart type={'submit'}>
-                      <ShoppingCart size={22} weight={'fill'}></ShoppingCart>
+                    <AddCart
+                      type={'button'}
+                      onClick={() => handleAddCart(coffee)}
+                    >
+                      <ShoppingCart size={22} weight={'fill'} />
                     </AddCart>
                   </Actions>
                 </Buy>
