@@ -21,29 +21,19 @@ import {
 
 import image from '../../assets/banner.png'
 import {
-  Coffee,
+  Coffee as CoffeeIcon,
   Minus,
   Package,
   Plus,
   ShoppingCart,
   Timer,
 } from 'phosphor-react'
-import { useState } from 'react'
-
-interface Label {
-  title: string
-}
-
-interface Coffee {
-  id: number
-  labels: Label[]
-  title: string
-  description: string
-  price: string
-  quantity: number
-}
+import { useContext, useState } from 'react'
+import { Coffee, OrdersContext } from '../../contexts/OrdersContext'
 
 export function Home() {
+  const { onAddCart } = useContext(OrdersContext)
+
   const [coffees, setCoffee] = useState<Coffee[]>([
     {
       id: 1,
@@ -183,27 +173,7 @@ export function Home() {
   }
 
   function handleAddCart(coffee: Coffee) {
-    const storedStateAsJSON = localStorage.getItem('@coffee-delivery:order')
-
-    if (storedStateAsJSON) {
-      const storedStateArray: Coffee[] = JSON.parse(storedStateAsJSON)
-      const existingCoffee = storedStateArray.find((c) => c.id === coffee.id)
-
-      if (existingCoffee) {
-        existingCoffee.quantity += coffee.quantity
-      } else {
-        storedStateArray.push(coffee)
-      }
-
-      localStorage.setItem(
-        '@coffee-delivery:order',
-        JSON.stringify(storedStateArray),
-      )
-
-      return
-    }
-
-    localStorage.setItem('@coffee-delivery:order', JSON.stringify([coffee]))
+    onAddCart(coffee)
   }
 
   return (
@@ -240,7 +210,7 @@ export function Home() {
               </h3>
               <h3>
                 <IconRoundedCoffee>
-                  <Coffee weight={'fill'} size={18} />
+                  <CoffeeIcon weight={'fill'} size={18} />
                 </IconRoundedCoffee>
                 O café chega fresquinho até você
               </h3>
