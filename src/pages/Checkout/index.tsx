@@ -35,10 +35,66 @@ import {
   Plus,
   Trash,
 } from 'phosphor-react'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
+import { Coffee, OrdersContext } from '../../contexts/OrdersContext.tsx'
+
+interface optionsCurrency {
+  style: string
+  currency: string
+  minimumFractionDigits: number
+  maximumFractionDigits: number
+}
 
 export function Checkout() {
+  const { orders, onRemoveCart, onUpdateQuantity } = useContext(OrdersContext)
   const [paymentSelected, setPayment] = useState('')
+
+  function handleUpdateQuantity(coffee: Coffee, action: 'add' | 'remove') {
+    if (action === 'add') {
+      coffee.quantity = coffee.quantity + 1
+    } else if (action === 'remove' && coffee.quantity > 1) {
+      coffee.quantity = coffee.quantity - 1
+    } else {
+      onRemoveCart(coffee.id)
+      return
+    }
+
+    onUpdateQuantity(coffee)
+  }
+
+  function handleRemoveCart(id: number) {
+    onRemoveCart(id)
+  }
+
+  let totalItensFormatted = '0,00'
+  let totalFormatted = '0,00'
+
+  function calculateTotalItems() {
+    if (!orders) {
+      return
+    }
+
+    const totalItens = orders?.reduce((acc, coffee) => {
+      const price = parseFloat(coffee.price.replace(',', '.')) || 0
+      const quantity = coffee.quantity || 0
+      return acc + price * quantity
+    }, 0)
+
+    const delivery = 5
+
+    const options: optionsCurrency = {
+      style: 'decimal',
+      currency: 'BRL',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }
+
+    totalFormatted = (totalItens + delivery).toLocaleString('pt-BR', options)
+
+    totalItensFormatted = totalItens.toLocaleString('pt-BR', options)
+  }
+
+  calculateTotalItems()
 
   return (
     <CheckoutContainer>
@@ -107,61 +163,40 @@ export function Checkout() {
       <OrderConfirmation>
         <Title>Cafés selecionados</Title>
         <Itens>
-          <Item>
-            <img src="/src/assets/coffees/1.png" alt="" />
-            <div>
-              <h4>Expresso Tradicional</h4>
-              <Actions>
-                <Quantity>
-                  <Minus size={16} weight={'bold'} />
-                  <span>1</span>
-                  <Plus size={16} weight={'bold'} />
-                </Quantity>
-                <Remove>
-                  <Trash size={16} weight={'bold'} /> <span>Remover</span>
-                </Remove>
-              </Actions>
-            </div>
-            <Price>R$ 10,50</Price>
-          </Item>
-          <Item>
-            <img src="/src/assets/coffees/1.png" alt="" />
-            <div>
-              <h4>Expresso Tradicional</h4>
-              <Actions>
-                <Quantity>
-                  <Minus size={16} weight={'bold'} />
-                  <span>1</span>
-                  <Plus size={16} weight={'bold'} />
-                </Quantity>
-                <Remove>
-                  <Trash size={16} weight={'bold'} /> <span>Remover</span>
-                </Remove>
-              </Actions>
-            </div>
-            <Price>R$ 10,50</Price>
-          </Item>
-          <Item>
-            <img src="/src/assets/coffees/1.png" alt="" />
-            <div>
-              <h4>Expresso Tradicional</h4>
-              <Actions>
-                <Quantity>
-                  <Minus size={16} weight={'bold'} />
-                  <span>1</span>
-                  <Plus size={16} weight={'bold'} />
-                </Quantity>
-                <Remove>
-                  <Trash size={16} weight={'bold'} /> <span>Remover</span>
-                </Remove>
-              </Actions>
-            </div>
-            <Price>R$ 10,50</Price>
-          </Item>
+          {orders?.map((order) => {
+            return (
+              <Item key={order.id}>
+                <img src={`/src/assets/coffees/${order.id}.png`} alt="" />
+                <div>
+                  <h4>{order.title}</h4>
+                  <Actions>
+                    <Quantity>
+                      <Minus
+                        size={16}
+                        weight={'bold'}
+                        onClick={() => handleUpdateQuantity(order, 'remove')}
+                      />
+                      <span>{order.quantity}</span>
+                      <Plus
+                        size={16}
+                        weight={'bold'}
+                        onClick={() => handleUpdateQuantity(order, 'add')}
+                      />
+                    </Quantity>
+                    <Remove onClick={() => handleRemoveCart(order.id)}>
+                      <Trash size={16} weight={'bold'} />
+                      <span>Remover</span>
+                    </Remove>
+                  </Actions>
+                </div>
+                <Price>R$ {order.price}</Price>
+              </Item>
+            )
+          })}
           <Total>
             <div>
               <h6>Total de itens</h6>
-              <h6>R$ 30,00</h6>
+              <h6>R$ {totalItensFormatted}</h6>
             </div>
             <div>
               <h6>Entrega</h6>
@@ -169,7 +204,7 @@ export function Checkout() {
             </div>
             <div>
               <h5>Total</h5>
-              <h5>R$ 35,00</h5>
+              <h5>R$ {totalFormatted}</h5>
             </div>
           </Total>
           <ButtonConfirmOrder type="submit">

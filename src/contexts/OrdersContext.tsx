@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useEffect, useState } from 'react'
 
-export interface Label {
+interface Label {
   title: string
 }
 
@@ -16,6 +16,8 @@ export interface Coffee {
 interface OrderContextType {
   orders: Coffee[] | null
   onAddCart: (coffee: Coffee) => void
+  onRemoveCart: (id: number) => void
+  onUpdateQuantity: (coffee: Coffee) => void
 }
 
 export const OrdersContext = createContext({} as OrderContextType)
@@ -46,6 +48,36 @@ export function OrdersContextProvider({ children }: OrderContextProviderProps) {
     })
   }
 
+  function onRemoveCart(id: number) {
+    setOrders((prevOrders) => {
+      const updatedOrders = prevOrders
+        ? prevOrders.filter((c) => c.id !== id)
+        : []
+
+      localStorage.setItem(
+        '@coffee-delivery:order',
+        JSON.stringify(updatedOrders),
+      )
+
+      return updatedOrders
+    })
+  }
+
+  function onUpdateQuantity(updatedCoffee: Coffee) {
+    setOrders((prevOrders) => {
+      const updatedOrders = prevOrders
+        ? prevOrders.map((c) => (c.id === updatedCoffee.id ? updatedCoffee : c))
+        : []
+
+      localStorage.setItem(
+        '@coffee-delivery:order',
+        JSON.stringify(updatedOrders),
+      )
+
+      return updatedOrders
+    })
+  }
+
   useEffect(() => {
     const storedOrders = localStorage.getItem('@coffee-delivery:order')
 
@@ -55,7 +87,14 @@ export function OrdersContextProvider({ children }: OrderContextProviderProps) {
   }, [])
 
   return (
-    <OrdersContext.Provider value={{ orders, onAddCart }}>
+    <OrdersContext.Provider
+      value={{
+        orders,
+        onAddCart,
+        onRemoveCart,
+        onUpdateQuantity,
+      }}
+    >
       {children}
     </OrdersContext.Provider>
   )

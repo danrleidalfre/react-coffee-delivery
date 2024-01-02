@@ -21,7 +21,7 @@ export function Header() {
           </div>
           <NavLink to="/checkout">
             <ShoppingCart size={22} weight={'fill'} />
-            {orders && <span>{orders.length}</span>}
+            {orders && orders?.length > 0 && <span>{orders?.length}</span>}
           </NavLink>
         </Nav>
       </HeaderContent>
