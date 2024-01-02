@@ -18,6 +18,7 @@ interface OrderContextType {
   onAddCart: (coffee: Coffee) => void
   onRemoveCart: (id: number) => void
   onUpdateQuantity: (coffee: Coffee) => void
+  onClearCart: () => void
 }
 
 export const OrdersContext = createContext({} as OrderContextType)
@@ -78,6 +79,11 @@ export function OrdersContextProvider({ children }: OrderContextProviderProps) {
     })
   }
 
+  function onClearCart() {
+    setOrders([])
+    localStorage.removeItem('@coffee-delivery:order')
+  }
+
   useEffect(() => {
     const storedOrders = localStorage.getItem('@coffee-delivery:order')
 
@@ -93,6 +99,7 @@ export function OrdersContextProvider({ children }: OrderContextProviderProps) {
         onAddCart,
         onRemoveCart,
         onUpdateQuantity,
+        onClearCart,
       }}
     >
       {children}
