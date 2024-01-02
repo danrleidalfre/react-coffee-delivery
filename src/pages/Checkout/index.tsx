@@ -35,10 +35,11 @@ import {
   Plus,
   Trash,
 } from 'phosphor-react'
-import { useContext, useState } from 'react'
+import { ChangeEvent, FormEvent, useContext, useState } from 'react'
 import { Coffee, OrdersContext } from '../../contexts/OrdersContext.tsx'
+import { useNavigate } from 'react-router-dom'
 
-interface optionsCurrency {
+interface OptionsCurrency {
   style: string
   currency: string
   minimumFractionDigits: number
@@ -47,7 +48,14 @@ interface optionsCurrency {
 
 export function Checkout() {
   const { orders, onRemoveCart, onUpdateQuantity } = useContext(OrdersContext)
-  const [paymentSelected, setPayment] = useState('')
+  const [zipcode, setZipcode] = useState('')
+  const [street, setStreet] = useState('')
+  const [number, setNumber] = useState('')
+  const [complement, setComplement] = useState('')
+  const [neighborhood, setNeighborhood] = useState('')
+  const [city, setCity] = useState('')
+  const [state, setState] = useState('')
+  const [payment, setPayment] = useState('')
 
   function handleUpdateQuantity(coffee: Coffee, action: 'add' | 'remove') {
     if (action === 'add') {
@@ -66,6 +74,60 @@ export function Checkout() {
     onRemoveCart(id)
   }
 
+  function handleChangeZipcode(event: ChangeEvent<HTMLInputElement>) {
+    setZipcode(event.target.value)
+  }
+
+  function handleChangeStreet(event: ChangeEvent<HTMLInputElement>) {
+    setStreet(event.target.value)
+  }
+
+  function handleChangeNumber(event: ChangeEvent<HTMLInputElement>) {
+    setNumber(event.target.value)
+  }
+
+  function handleChangeComplement(event: ChangeEvent<HTMLInputElement>) {
+    setComplement(event.target.value)
+  }
+
+  function handleChangeNeighborhood(event: ChangeEvent<HTMLInputElement>) {
+    setNeighborhood(event.target.value)
+  }
+
+  function handleChangeCity(event: ChangeEvent<HTMLInputElement>) {
+    setCity(event.target.value)
+  }
+
+  function handleChangeState(event: ChangeEvent<HTMLInputElement>) {
+    setState(event.target.value)
+  }
+
+  const navigate = useNavigate()
+
+  function handleSubmitOrder(event: FormEvent) {
+    event.preventDefault()
+
+    if (!payment) {
+      alert('Necessário selecionar a forma de pagamento')
+      return
+    }
+
+    const delivery = {
+      zipcode,
+      street,
+      number,
+      complement,
+      neighborhood,
+      city,
+      state,
+      payment,
+    }
+
+    localStorage.setItem('@coffee-delivery:delivery', JSON.stringify(delivery))
+
+    navigate('/success')
+  }
+
   let totalItensFormatted = '0,00'
   let totalFormatted = '0,00'
 
@@ -82,7 +144,7 @@ export function Checkout() {
 
     const delivery = 5
 
-    const options: optionsCurrency = {
+    const options: OptionsCurrency = {
       style: 'decimal',
       currency: 'BRL',
       minimumFractionDigits: 2,
@@ -108,17 +170,52 @@ export function Checkout() {
               <p>Informe o endereço onde deseja receber seu pedido</p>
             </Titles>
           </IconAndTitle>
-          <Form>
-            <Input placeholder="CEP" />
-            <InputFull placeholder="Rua" />
+          <Form id="form" onSubmit={handleSubmitOrder}>
+            <Input
+              placeholder="CEP"
+              value={zipcode}
+              onChange={handleChangeZipcode}
+              required
+            />
+            <InputFull
+              placeholder="Rua"
+              value={street}
+              onChange={handleChangeStreet}
+              required
+            />
             <InputRow>
-              <Input placeholder="Número" />
-              <InputFull placeholder="Complemento" />
+              <Input
+                placeholder="Número"
+                value={number}
+                onChange={handleChangeNumber}
+                required
+              />
+              <InputFull
+                placeholder="Complemento"
+                value={complement}
+                onChange={handleChangeComplement}
+                required
+              />
             </InputRow>
             <InputRow>
-              <Input placeholder="Bairro" />
-              <InputCity placeholder="Cidade" />
-              <InputUF placeholder="UF" />
+              <Input
+                placeholder="Bairro"
+                value={neighborhood}
+                onChange={handleChangeNeighborhood}
+                required
+              />
+              <InputCity
+                placeholder="Cidade"
+                value={city}
+                onChange={handleChangeCity}
+                required
+              />
+              <InputUF
+                placeholder="UF"
+                value={state}
+                onChange={handleChangeState}
+                required
+              />
             </InputRow>
           </Form>
         </Address>
@@ -136,7 +233,7 @@ export function Checkout() {
             <PaymentButton
               type="button"
               onClick={() => setPayment('credit')}
-              className={paymentSelected === 'credit' ? 'active' : ''}
+              className={payment === 'credit' ? 'active' : ''}
             >
               <CreditCard size={16} />
               <span>Cartão de Crédito</span>
@@ -144,7 +241,7 @@ export function Checkout() {
             <PaymentButton
               type="button"
               onClick={() => setPayment('debit')}
-              className={paymentSelected === 'debit' ? 'active' : ''}
+              className={payment === 'debit' ? 'active' : ''}
             >
               <Bank size={16} />
               <span>Cartão de Débito</span>
@@ -152,7 +249,7 @@ export function Checkout() {
             <PaymentButton
               type="button"
               onClick={() => setPayment('money')}
-              className={paymentSelected === 'money' ? 'active' : ''}
+              className={payment === 'money' ? 'active' : ''}
             >
               <Money size={16} />
               <span>Dinheiro ou PIX</span>
@@ -207,7 +304,7 @@ export function Checkout() {
               <h5>R$ {totalFormatted}</h5>
             </div>
           </Total>
-          <ButtonConfirmOrder type="submit">
+          <ButtonConfirmOrder type="submit" form="form">
             Confirmar Pedido
           </ButtonConfirmOrder>
         </Itens>
